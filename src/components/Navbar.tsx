@@ -1,11 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,7 +19,15 @@ const Navbar = () => {
       }
     };
 
+    // Check if user is logged in
+    const checkLoginStatus = () => {
+      const loggedIn = localStorage.getItem('lunaLoggedIn') === 'true';
+      setIsLoggedIn(loggedIn);
+    };
+
+    checkLoginStatus();
     window.addEventListener('scroll', handleScroll);
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -28,6 +39,21 @@ const Navbar = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMobileMenuOpen(false);
+  };
+  
+  const handleLogin = () => {
+    navigate('/auth');
+  };
+  
+  const handleSignUp = () => {
+    navigate('/auth');
+  };
+  
+  const handleLogout = () => {
+    localStorage.removeItem('lunaLoggedIn');
+    setIsLoggedIn(false);
+    // Refresh the page to reset all states
+    window.location.reload();
   };
 
   return (
@@ -89,12 +115,32 @@ const Navbar = () => {
           </nav>
           
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="text-gray-700 hover:text-luna-purple hover:bg-transparent">
-              Log In
-            </Button>
-            <Button className="cta-button cta-button-primary">
-              Sign Up
-            </Button>
+            {isLoggedIn ? (
+              <Button 
+                variant="ghost" 
+                className="text-gray-700 hover:text-luna-purple hover:bg-transparent flex items-center gap-2"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  className="text-gray-700 hover:text-luna-purple hover:bg-transparent"
+                  onClick={handleLogin}
+                >
+                  Log In
+                </Button>
+                <Button 
+                  className="cta-button cta-button-primary"
+                  onClick={handleSignUp}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </div>
           
           <button 
@@ -150,12 +196,32 @@ const Navbar = () => {
                 Testimonials
               </a>
               <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
-                <Button variant="ghost" className="justify-center">
-                  Log In
-                </Button>
-                <Button className="cta-button cta-button-primary justify-center">
-                  Sign Up
-                </Button>
+                {isLoggedIn ? (
+                  <Button 
+                    variant="ghost" 
+                    className="justify-center flex items-center gap-2"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Log Out
+                  </Button>
+                ) : (
+                  <>
+                    <Button 
+                      variant="ghost" 
+                      className="justify-center"
+                      onClick={handleLogin}
+                    >
+                      Log In
+                    </Button>
+                    <Button 
+                      className="cta-button cta-button-primary justify-center"
+                      onClick={handleSignUp}
+                    >
+                      Sign Up
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

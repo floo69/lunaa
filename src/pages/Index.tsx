@@ -16,6 +16,7 @@ const Index = () => {
     // Add IDs to sections for navigation
     const sections = document.querySelectorAll('section');
     if (sections[0]) sections[0].id = 'hero';
+    if (sections[1]) sections[1].id = 'features';
     if (sections[2]) sections[2].id = 'how-it-works';
     if (sections[3]) sections[3].id = 'testimonials';
     

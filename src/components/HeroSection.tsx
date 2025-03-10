@@ -1,13 +1,35 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { CalendarHeart, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  useEffect(() => {
+    // Check if user is logged in
+    const loggedIn = localStorage.getItem('lunaLoggedIn') === 'true';
+    setIsLoggedIn(loggedIn);
+  }, []);
+
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById('features');
     if (featuresSection) {
       featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  const handleGetStarted = () => {
+    if (isLoggedIn) {
+      // In a real app, redirect to dashboard
+      console.log('User is logged in, would redirect to dashboard');
+      // For now, we'll just show an alert
+      alert('Welcome back! In a complete app, you would be redirected to your dashboard.');
+    } else {
+      // Redirect to auth page
+      navigate('/auth');
     }
   };
 
@@ -23,8 +45,11 @@ const HeroSection = () => {
               Your personalized menstrual, fertility, and wellness companion with AI-powered insights.
             </p>
             <div className="flex flex-wrap gap-4 mt-2">
-              <Button className="cta-button cta-button-primary">
-                Get Started
+              <Button 
+                className="cta-button cta-button-primary"
+                onClick={handleGetStarted}
+              >
+                {isLoggedIn ? 'View Dashboard' : 'Get Started'}
               </Button>
               <Button 
                 variant="outline" 
