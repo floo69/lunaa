@@ -45,7 +45,7 @@ const PhaseCard: React.FC<PhaseCardProps> = ({
 };
 
 const CycleOverview = () => {
-  // Explicitly type the cyclePhase constant
+  // Explicitly type the cyclePhase constant and make sure it's one of the valid values
   const cyclePhase: CyclePhase = 'Ovulation';
   const cycleDay = 14;
   const cycleLength = 28;
