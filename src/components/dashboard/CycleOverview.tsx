@@ -4,6 +4,7 @@ import { CalendarDays, Droplets, Moon, Sun } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
+// Define the CyclePhase type as a union of string literals
 type CyclePhase = 'Period' | 'Follicular' | 'Ovulation' | 'Luteal';
 
 const CycleOverview = () => {
@@ -105,7 +106,7 @@ const CycleOverview = () => {
 
 interface PhaseCardProps {
   icon: React.ReactNode;
-  title: CyclePhase;
+  title: CyclePhase;  // This now uses the CyclePhase type
   isActive: boolean;
   days: string;
 }
