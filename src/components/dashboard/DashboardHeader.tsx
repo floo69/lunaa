@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Bell, 
   Menu, 
@@ -26,6 +26,7 @@ interface DashboardHeaderProps {
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const handleLogout = () => {
@@ -47,10 +48,30 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#" className="text-gray-700 hover:text-luna-purple transition-colors">Home</a>
-            <a href="#" className="text-gray-700 hover:text-luna-purple transition-colors">Track</a>
-            <a href="#" className="text-gray-700 hover:text-luna-purple transition-colors">Consult</a>
-            <a href="#" className="text-gray-700 hover:text-luna-purple transition-colors">Community</a>
+            <Link 
+              to="/dashboard" 
+              className={`text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/dashboard' ? 'text-luna-purple font-medium' : ''}`}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/track" 
+              className={`text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/track' ? 'text-luna-purple font-medium' : ''}`}
+            >
+              Track
+            </Link>
+            <Link 
+              to="/consult" 
+              className={`text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/consult' ? 'text-luna-purple font-medium' : ''}`}
+            >
+              Consult
+            </Link>
+            <Link 
+              to="/community" 
+              className={`text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/community' ? 'text-luna-purple font-medium' : ''}`}
+            >
+              Community
+            </Link>
           </nav>
           
           {/* User Actions */}
@@ -107,10 +128,34 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName }) => {
         <div className="md:hidden border-t border-gray-100 bg-white">
           <div className="container px-4 py-3">
             <nav className="flex flex-col gap-2">
-              <a href="#" className="py-2 text-gray-700 hover:text-luna-purple transition-colors">Home</a>
-              <a href="#" className="py-2 text-gray-700 hover:text-luna-purple transition-colors">Track</a>
-              <a href="#" className="py-2 text-gray-700 hover:text-luna-purple transition-colors">Consult</a>
-              <a href="#" className="py-2 text-gray-700 hover:text-luna-purple transition-colors">Community</a>
+              <Link 
+                to="/dashboard" 
+                className={`py-2 text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/dashboard' ? 'text-luna-purple font-medium' : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/track" 
+                className={`py-2 text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/track' ? 'text-luna-purple font-medium' : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Track
+              </Link>
+              <Link 
+                to="/consult" 
+                className={`py-2 text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/consult' ? 'text-luna-purple font-medium' : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Consult
+              </Link>
+              <Link 
+                to="/community" 
+                className={`py-2 text-gray-700 hover:text-luna-purple transition-colors ${location.pathname === '/community' ? 'text-luna-purple font-medium' : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Community
+              </Link>
               <div className="py-2 flex items-center gap-2">
                 <UserCircle className="h-5 w-5 text-gray-700" />
                 <span>{userName}</span>
