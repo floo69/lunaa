@@ -1,125 +1,115 @@
 
 import React from 'react';
-import { CalendarDays, Droplets, Moon, Sun } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Calendar, Droplets, Zap, Moon, ArrowRight } from 'lucide-react';
 
-// Define the CyclePhase type as a union of string literals
+// Define a literal type for cycle phases to prevent type comparison errors
 type CyclePhase = 'Period' | 'Follicular' | 'Ovulation' | 'Luteal';
 
+interface PhaseCardProps {
+  title: CyclePhase;
+  daysCount: number;
+  description: string;
+  icon: React.ReactNode;
+  color: string;
+  active: boolean;
+}
+
+const PhaseCard: React.FC<PhaseCardProps> = ({ 
+  title, 
+  daysCount, 
+  description, 
+  icon, 
+  color, 
+  active 
+}) => {
+  return (
+    <Card className={`border-none ${active ? 'shadow-md' : 'opacity-70'}`}>
+      <CardContent className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <div className={`rounded-full p-2 ${color}`}>
+            {icon}
+          </div>
+          <div>
+            <h3 className="font-medium text-gray-800">{title}</h3>
+            <p className="text-xs text-gray-500">
+              {daysCount} {daysCount === 1 ? 'day' : 'days'}
+            </p>
+          </div>
+        </div>
+        <p className="text-sm text-gray-600">{description}</p>
+      </CardContent>
+    </Card>
+  );
+};
+
 const CycleOverview = () => {
-  // In a real app, this would come from the user's data
-  const cycleDay = 12;
+  // In a real app, these would come from the user's data
+  const cyclePhase: CyclePhase = 'Ovulation';
+  const cycleDay = 14;
   const cycleLength = 28;
-  const cyclePhase: CyclePhase = "Ovulation";
-  const daysUntilNextPeriod = 16;
   const progress = (cycleDay / cycleLength) * 100;
   
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <CalendarDays className="h-5 w-5 text-luna-purple" />
-        Your Cycle Overview
-      </h2>
+      <h2 className="text-xl font-semibold mb-4">Cycle Overview</h2>
       
-      <Card className="overflow-hidden border-none shadow-md">
-        <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-medium">
-                Day {cycleDay} of Your Cycle
-              </h3>
-              <p className="text-purple-800 font-semibold mt-1">
-                You're in the {cyclePhase} Phase!
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-2 text-sm bg-white/80 px-3 py-1.5 rounded-full">
-              <Droplets className="h-4 w-4 text-red-400" />
-              Next period in {daysUntilNextPeriod} days
-            </div>
-          </div>
-          
-          <div className="mt-4">
-            <div className="flex justify-between text-xs text-gray-600 mb-1.5">
-              <span>Period</span>
-              <span>Follicular</span>
-              <span>Ovulation</span>
-              <span>Luteal</span>
-            </div>
-            <Progress value={progress} className="h-2" />
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
-            <PhaseCard 
-              icon={<Droplets className="h-5 w-5 text-red-400" />} 
-              title="Period"
-              isActive={cyclePhase === "Period"}
-              days="1-5"
-            />
-            <PhaseCard 
-              icon={<Moon className="h-5 w-5 text-blue-400" />} 
-              title="Follicular"
-              isActive={cyclePhase === "Follicular"}
-              days="6-11"
-            />
-            <PhaseCard 
-              icon={<Sun className="h-5 w-5 text-yellow-400" />} 
-              title="Ovulation"
-              isActive={cyclePhase === "Ovulation"}
-              days="12-14"
-            />
-            <PhaseCard 
-              icon={<Moon className="h-5 w-5 text-purple-400" />} 
-              title="Luteal"
-              isActive={cyclePhase === "Luteal"}
-              days="15-28"
-            />
-          </div>
-        </div>
-        
+      <Card className="border-none shadow-md mb-6">
         <CardContent className="p-4">
-          <h4 className="font-medium text-gray-700">During {cyclePhase}, you might experience:</h4>
-          <ul className="mt-2 text-sm text-gray-600 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
-            <li className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-luna-purple"></span>
-              Increased energy levels
-            </li>
-            <li className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-luna-purple"></span>
-              Higher sex drive
-            </li>
-            <li className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-luna-purple"></span>
-              Better mood overall
-            </li>
-            <li className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-luna-purple"></span>
-              Increased body temperature
-            </li>
-          </ul>
+          <div className="flex justify-between items-center mb-3">
+            <div>
+              <h3 className="font-medium text-gray-800">Day {cycleDay} of {cycleLength}</h3>
+              <p className="text-sm font-medium text-luna-purple">{cyclePhase} Phase</p>
+            </div>
+            <Calendar className="h-5 w-5 text-gray-400" />
+          </div>
+          
+          <Progress value={progress} className="h-2" />
+          
+          <div className="flex justify-between text-xs text-gray-500 mt-2">
+            <span>Period</span>
+            <span>Ovulation</span>
+            <span>Next Period</span>
+          </div>
         </CardContent>
       </Card>
-    </section>
-  );
-};
-
-interface PhaseCardProps {
-  icon: React.ReactNode;
-  title: CyclePhase;  // This now uses the CyclePhase type
-  isActive: boolean;
-  days: string;
-}
-
-const PhaseCard: React.FC<PhaseCardProps> = ({ icon, title, isActive, days }) => {
-  return (
-    <div className={`rounded-lg p-2 text-center ${isActive ? 'bg-white shadow-sm' : 'bg-white/50'}`}>
-      <div className="flex justify-center mb-1">
-        {icon}
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <PhaseCard 
+          title="Period"
+          daysCount={5}
+          description="Bleeding starts. The lining of the uterus is shed."
+          icon={<Droplets className="h-4 w-4 text-red-500" />}
+          color="bg-red-50"
+          active={cyclePhase === 'Period'}
+        />
+        <PhaseCard 
+          title="Follicular"
+          daysCount={7}
+          description="Estrogen rises. Your body prepares for ovulation."
+          icon={<ArrowRight className="h-4 w-4 text-pink-500" />}
+          color="bg-pink-50"
+          active={cyclePhase === 'Follicular'}
+        />
+        <PhaseCard 
+          title="Ovulation"
+          daysCount={2}
+          description="Egg is released. This is your fertile window."
+          icon={<Zap className="h-4 w-4 text-purple-500" />}
+          color="bg-purple-50"
+          active={cyclePhase === 'Ovulation'}
+        />
+        <PhaseCard 
+          title="Luteal"
+          daysCount={14}
+          description="Progesterone rises. PMS symptoms may appear."
+          icon={<Moon className="h-4 w-4 text-blue-500" />}
+          color="bg-blue-50"
+          active={cyclePhase === 'Luteal'}
+        />
       </div>
-      <p className={`text-sm font-medium ${isActive ? 'text-gray-800' : 'text-gray-600'}`}>{title}</p>
-      <p className="text-xs text-gray-500">Days {days}</p>
-    </div>
+    </section>
   );
 };
 

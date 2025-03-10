@@ -3,18 +3,69 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardFooter from '@/components/dashboard/DashboardFooter';
-import { Calendar, Plus, Droplets, Activity, Moon, Pill } from 'lucide-react';
+import { Calendar, Plus, Droplets, Activity, Moon, Pill, CalendarDays, Heart, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 
 const Track = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('Sarah');
+  const [openDialog, setOpenDialog] = useState<string | null>(null);
+  const [flowIntensity, setFlowIntensity] = useState('medium');
+  const [symptomSearch, setSymptomSearch] = useState('');
   
   // Simulated data for the calendar
   const today = new Date();
   const currentDay = today.getDate();
+  
+  // Common symptoms list
+  const commonSymptoms = [
+    { id: 'cramps', name: 'Cramps', selected: false },
+    { id: 'headache', name: 'Headache', selected: false },
+    { id: 'bloating', name: 'Bloating', selected: false },
+    { id: 'fatigue', name: 'Fatigue', selected: false },
+    { id: 'mood-swings', name: 'Mood Swings', selected: false },
+    { id: 'tender-breasts', name: 'Tender Breasts', selected: false },
+    { id: 'back-pain', name: 'Back Pain', selected: false },
+    { id: 'acne', name: 'Acne', selected: false },
+  ];
+  
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  
+  const handleLogPeriod = () => {
+    toast({
+      title: "Period logged successfully",
+      description: `You've logged your period with ${flowIntensity} flow intensity.`,
+    });
+    setOpenDialog(null);
+  };
+  
+  const handleLogSymptoms = () => {
+    toast({
+      title: "Symptoms logged successfully",
+      description: `You've logged ${selectedSymptoms.length} symptoms.`,
+    });
+    setOpenDialog(null);
+    setSelectedSymptoms([]);
+  };
+  
+  const toggleSymptom = (symptomId: string) => {
+    if (selectedSymptoms.includes(symptomId)) {
+      setSelectedSymptoms(selectedSymptoms.filter(id => id !== symptomId));
+    } else {
+      setSelectedSymptoms([...selectedSymptoms, symptomId]);
+    }
+  };
+  
+  const filteredSymptoms = symptomSearch.length > 0 
+    ? commonSymptoms.filter(s => s.name.toLowerCase().includes(symptomSearch.toLowerCase()))
+    : commonSymptoms;
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-luna-lavender/10 to-luna-peach/10">
@@ -97,24 +148,28 @@ const Track = () => {
               title="Log Period"
               description="Add first day or flow intensity"
               color="bg-red-50"
+              onClick={() => setOpenDialog('period')}
             />
             <QuickAddCard 
               icon={<Plus className="h-5 w-5 text-purple-500" />}
               title="Log Symptoms"
               description="Cramps, headache, bloating, etc."
               color="bg-purple-50"
+              onClick={() => setOpenDialog('symptoms')}
             />
             <QuickAddCard 
               icon={<Activity className="h-5 w-5 text-blue-500" />}
               title="Log Mood & Energy"
               description="Track emotional changes"
               color="bg-blue-50"
+              onClick={() => setOpenDialog('mood')}
             />
             <QuickAddCard 
               icon={<Pill className="h-5 w-5 text-green-500" />}
               title="Log Medication"
               description="Birth control, supplements, etc."
               color="bg-green-50"
+              onClick={() => setOpenDialog('medication')}
             />
           </div>
         </section>
@@ -209,9 +264,16 @@ const Track = () => {
                     Connect Luna with Apple Health, Fitbit, or Oura Ring to automatically import your temperature, sleep, and activity data for more accurate predictions.
                   </p>
                 </div>
-                <Button className="bg-luna-purple hover:bg-purple-600">
-                  Connect Devices
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Heart className="h-4 w-4" />
+                    Apple Health
+                  </Button>
+                  <Button className="bg-luna-purple hover:bg-purple-600 flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4" />
+                    Connect
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -219,6 +281,175 @@ const Track = () => {
       </main>
       
       <DashboardFooter />
+      
+      {/* Period Logging Dialog */}
+      <Dialog open={openDialog === 'period'} onOpenChange={() => setOpenDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Log Your Period</DialogTitle>
+            <DialogDescription>
+              Record the details of your period to get more accurate predictions.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="date">Date</Label>
+              <Input 
+                id="date" 
+                type="date" 
+                defaultValue={today.toISOString().split('T')[0]}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Flow Intensity</Label>
+              <RadioGroup 
+                value={flowIntensity} 
+                onValueChange={setFlowIntensity}
+                className="flex flex-col space-y-1"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="light" id="light" />
+                  <Label htmlFor="light">Light</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="medium" id="medium" />
+                  <Label htmlFor="medium">Medium</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="heavy" id="heavy" />
+                  <Label htmlFor="heavy">Heavy</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="spotting" id="spotting" />
+                  <Label htmlFor="spotting">Spotting</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setOpenDialog(null)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleLogPeriod}
+              className="bg-luna-purple hover:bg-purple-600"
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Symptoms Logging Dialog */}
+      <Dialog open={openDialog === 'symptoms'} onOpenChange={() => setOpenDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Log Your Symptoms</DialogTitle>
+            <DialogDescription>
+              Select the symptoms you're experiencing today.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="symptom-search">Search Symptoms</Label>
+              <Input 
+                id="symptom-search" 
+                placeholder="Search for symptoms..." 
+                value={symptomSearch}
+                onChange={(e) => setSymptomSearch(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              {filteredSymptoms.map((symptom) => (
+                <div 
+                  key={symptom.id}
+                  className={`p-2 rounded-md border cursor-pointer transition-colors
+                    ${selectedSymptoms.includes(symptom.id) 
+                      ? 'border-luna-purple bg-luna-lavender/20' 
+                      : 'border-gray-200 hover:bg-gray-50'}`}
+                  onClick={() => toggleSymptom(symptom.id)}
+                >
+                  <div className="flex items-center">
+                    <div className={`w-4 h-4 rounded-full mr-2 
+                      ${selectedSymptoms.includes(symptom.id) 
+                        ? 'bg-luna-purple' 
+                        : 'bg-gray-200'}`}
+                    />
+                    <span className="text-sm">{symptom.name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setOpenDialog(null)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleLogSymptoms}
+              className="bg-luna-purple hover:bg-purple-600"
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Mood & Energy Dialog would go here */}
+      <Dialog open={openDialog === 'mood'} onOpenChange={() => setOpenDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Log Mood & Energy</DialogTitle>
+            <DialogDescription>
+              Track how you're feeling today.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-center text-sm text-gray-500">Coming soon!</p>
+          </div>
+          <DialogFooter>
+            <Button 
+              type="button" 
+              onClick={() => setOpenDialog(null)}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Medication Dialog would go here */}
+      <Dialog open={openDialog === 'medication'} onOpenChange={() => setOpenDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Log Medication</DialogTitle>
+            <DialogDescription>
+              Keep track of your medications and supplements.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-center text-sm text-gray-500">Coming soon!</p>
+          </div>
+          <DialogFooter>
+            <Button 
+              type="button" 
+              onClick={() => setOpenDialog(null)}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -228,11 +459,15 @@ interface QuickAddCardProps {
   title: string;
   description: string;
   color: string;
+  onClick?: () => void;
 }
 
-const QuickAddCard: React.FC<QuickAddCardProps> = ({ icon, title, description, color }) => {
+const QuickAddCard: React.FC<QuickAddCardProps> = ({ icon, title, description, color, onClick }) => {
   return (
-    <Card className="border-none shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+    <Card 
+      className="border-none shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={onClick}
+    >
       <CardContent className={`p-4 ${color} rounded-lg h-full`}>
         <div className="flex flex-col items-center text-center">
           <div className="mb-2">
