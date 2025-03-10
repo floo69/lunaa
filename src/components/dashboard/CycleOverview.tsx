@@ -1,14 +1,15 @@
-
 import React from 'react';
 import { CalendarDays, Droplets, Moon, Sun } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
+type CyclePhase = 'Period' | 'Follicular' | 'Ovulation' | 'Luteal';
+
 const CycleOverview = () => {
   // In a real app, this would come from the user's data
   const cycleDay = 12;
   const cycleLength = 28;
-  const cyclePhase = "Ovulation";
+  const cyclePhase: CyclePhase = "Ovulation";
   const daysUntilNextPeriod = 16;
   const progress = (cycleDay / cycleLength) * 100;
   
@@ -103,7 +104,7 @@ const CycleOverview = () => {
 
 interface PhaseCardProps {
   icon: React.ReactNode;
-  title: string;
+  title: CyclePhase;
   isActive: boolean;
   days: string;
 }

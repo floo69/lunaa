@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Seedling, Calendar, Target } from 'lucide-react';
+import { Sprout, Calendar, Target } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
@@ -8,7 +8,7 @@ const WellnessProgress = () => {
   return (
     <section className="mb-8">
       <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <Seedling className="h-5 w-5 text-luna-purple" />
+        <Sprout className="h-5 w-5 text-luna-purple" />
         Wellness Gamification
       </h2>
       
@@ -18,7 +18,7 @@ const WellnessProgress = () => {
             {/* Tree-Planting Progress */}
             <div>
               <h3 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
-                <Seedling className="h-4 w-4 text-green-600" />
+                <Sprout className="h-4 w-4 text-green-600" />
                 Tree-Planting Progress
               </h3>
               
