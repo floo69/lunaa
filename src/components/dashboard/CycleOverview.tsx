@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CalendarDays, Droplets, Moon, Sun } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
